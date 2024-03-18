@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 
 namespace nietras.SeparatedValues;
 
@@ -14,7 +15,13 @@ public readonly record struct SepReaderOptions
         CreateToString = SepToString.Direct;
         DisableFastFloat = false;
         DisableColCountCheck = false;
+        HeaderStringComparer = StringComparer.Ordinal;
     }
+
+    /// <summary>
+    /// Specifies the default comparison method for header name lookups.  The default is StringComparer.Ordinal.
+    /// </summary>
+    public StringComparer HeaderStringComparer { get; init; } = StringComparer.Ordinal;
 
     /// <summary>
     /// Specifies the separator used, if `null` then automatic detection 

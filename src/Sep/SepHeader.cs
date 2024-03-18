@@ -22,7 +22,7 @@ public sealed class SepHeader
     internal static SepHeader Parse(Sep sep, string line)
     {
         var colNames = sep.Split(line);
-        var colNameToIndex = new Dictionary<string, int>(colNames.Length);
+        var colNameToIndex = new Dictionary<string, int>(colNames.Length, sep.Reader().HeaderStringComparer);
         for (var i = 0; i < colNames.Length; i++)
         {
             var colName = colNames[i];

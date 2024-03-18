@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Xml.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace nietras.SeparatedValues.Test;
@@ -57,6 +58,42 @@ public class SepHeaderTest
     {
         var header = SepHeader.Parse(Sep.New(';'), "A;B;C;GT_0;RE_0;GT_1;RE_1");
         AreEqual(new[] { "GT_0", "GT_1" }, header.NamesStartingWith("GT_"));
+    }
+
+    [TestMethod]
+    public void SepHeaderTest_CaseSensitiveNameFound()
+    {
+        var header = SepHeader.Parse(Sep.New(';'), "A;B;C;");
+        var result = header.IndexOf("B");
+        Assert.AreEqual(1, result);
+    }
+
+    [TestMethod]
+    public void SepHeaderTest_CaseSensitiveNameNotFound()
+    {
+        var header = SepHeader.Parse(Sep.New(';'), "A;B;C;");
+        Action act = () => header.IndexOf("b");
+        Assert.ThrowsException<KeyNotFoundException>(act);
+    }
+
+    [TestMethod]
+    public void SepHeaderTest_CaseInsensitiveNameFoundWithCorrectCase()
+    {
+        var sep = Sep.New(';')
+            .Reader(_ => new SepReaderOptions { HeaderStringComparer = StringComparer.OrdinalIgnoreCase })
+            .FromText("A;B;C");
+        var result = sep.Header.IndexOf("B");
+        Assert.AreEqual(1, result);
+    }
+
+    [TestMethod]
+    public void SepHeaderTest_CaseInsensitiveNameFoundWithIncorrectCase()
+    {
+        var sep = Sep.New(';')
+            .Reader(_ => new SepReaderOptions { HeaderStringComparer = StringComparer.OrdinalIgnoreCase })
+            .FromText("A;B;C");
+        var result = sep.Header.IndexOf("b");
+        Assert.AreEqual(1, result);
     }
 
     [TestMethod]
